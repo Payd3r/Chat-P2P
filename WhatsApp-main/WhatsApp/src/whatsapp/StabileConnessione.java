@@ -8,7 +8,9 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,10 +23,23 @@ public class StabileConnessione extends javax.swing.JFrame {
     /**
      * Creates new form JFrame
      */
+    ThreadRiceviConnessione TRC;
+    IO InviaRicevi;
 
-    
-    public StabileConnessione() throws SocketException {
+    private void IniziaComunicazione() {
+        //apro form per comunicazione
+        Comunicazione c = new Comunicazione();
+        this.setVisible(false);
+        c.setVisible(true);
+    }
+
+    public StabileConnessione() throws SocketException, InterruptedException {
         initComponents();
+        InviaRicevi = IO.getIstance();
+        TRC = new ThreadRiceviConnessione();
+        TRC.start();
+        TRC.join();
+        IniziaComunicazione();
     }
 
     /**
@@ -37,7 +52,7 @@ public class StabileConnessione extends javax.swing.JFrame {
     private void initComponents() {
 
         jButton1 = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
+        indirizzo = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         ris = new javax.swing.JLabel();
@@ -65,9 +80,8 @@ public class StabileConnessione extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(ris, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE)))
+                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(indirizzo, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
                 .addContainerGap(91, Short.MAX_VALUE))
@@ -80,7 +94,7 @@ public class StabileConnessione extends javax.swing.JFrame {
                 .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(indirizzo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
                 .addGap(57, 57, 57)
                 .addComponent(ris, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -91,7 +105,28 @@ public class StabileConnessione extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-       
+        try {
+            if (indirizzo.getText() != "") {
+                InviaRicevi.inviaInizio("a;Andrea;", InetAddress.getByName(indirizzo.getText()));
+                String messaggio = InviaRicevi.ricevi();
+                String[] caso = messaggio.split(";");
+                if (caso[0] == "y") {
+                    InviaRicevi.destinatario = caso[1];
+                    InviaRicevi.invia("y; ;");
+                    IniziaComunicazione();
+                } else if (caso[0] == "n") {
+                    InviaRicevi.destinatario = "";
+                    InviaRicevi.indirizzoD = null;
+                    InviaRicevi.invia("n; ;");
+                } else {
+                }
+            }
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(StabileConnessione.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(StabileConnessione.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
@@ -129,16 +164,18 @@ public class StabileConnessione extends javax.swing.JFrame {
                     new StabileConnessione().setVisible(true);
                 } catch (SocketException ex) {
                     Logger.getLogger(StabileConnessione.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(StabileConnessione.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField indirizzo;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JLabel ris;
     // End of variables declaration//GEN-END:variables
 }

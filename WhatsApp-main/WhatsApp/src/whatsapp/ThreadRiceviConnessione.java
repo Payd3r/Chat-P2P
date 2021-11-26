@@ -7,6 +7,8 @@ package whatsapp;
 
 import java.io.IOException;
 import java.net.SocketException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -35,18 +37,22 @@ public class ThreadRiceviConnessione extends Thread {
         String messaggio = "";
         String[] caso = new String[3];
         while (true) {
-            messaggio = InviaRicevi.ricevi();
-            caso = messaggio.split(";");
-            if (caso[0] == "a") {
-                chiedoUtente();
-                InviaRicevi.destinatario = caso[1];
-            } else if (caso[0] == "y" && InviaRicevi.destinatario != "") {
-                break;
-            } else if (caso[0] == "n") {
-                //connessione rifiutata
-                InviaRicevi.indirizzoD = null;
-                InviaRicevi.destinatario = "";
-            } else {
+            try {
+                messaggio = InviaRicevi.ricevi();
+                caso = messaggio.split(";");
+                if (caso[0] == "a") {
+                    chiedoUtente();
+                    InviaRicevi.destinatario = caso[1];
+                } else if (caso[0] == "y" && InviaRicevi.destinatario != "") {
+                    break;
+                } else if (caso[0] == "n") {
+                    //connessione rifiutata
+                    InviaRicevi.indirizzoD = null;
+                    InviaRicevi.destinatario = "";
+                } else {
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(ThreadRiceviConnessione.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

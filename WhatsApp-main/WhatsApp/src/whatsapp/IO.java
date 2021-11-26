@@ -78,7 +78,7 @@ public class IO {
             //se non sto ancora comunicando 
             //salvo l'indirizzo
             indirizzoD = packet.getAddress();
-            //ricevo il pacchetto
+            //ritorno contenuto pacchetto
             return new String(dataReceived, 0, packet.getLength());
         }
         return "";

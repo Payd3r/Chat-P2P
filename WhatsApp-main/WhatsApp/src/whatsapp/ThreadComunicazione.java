@@ -26,36 +26,6 @@ public class ThreadComunicazione extends Thread {
         nomeDestinatario = null;
     }
 
-   
-
-    private String ricevoMessaggio() throws IOException {
-        String row = null;
-        row = IO.getIstance().ricevi();
-        return row;
-    }
-
-    void creaConnessione(String s) {
-        if (s != "") {
-            try {
-                IO.getIstance().inviaInizio("a;" + nomeMittente, InetAddress.getByName(s));
-            } catch (SocketException ex) {
-                Logger.getLogger(ThreadComunicazione.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (UnknownHostException ex) {
-                Logger.getLogger(ThreadComunicazione.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(ThreadComunicazione.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-
-    void chiudiConnessione() throws SocketException, IOException {
-        IO.getIstance().invia("c; ;");
-    }
-
-    void inviaMessaggio(String s) throws SocketException, IOException {
-        IO.getIstance().invia("m;" + s);
-        Messaggi.getIstance().aggiungi(s, true);
-    }
 
     @Override
     public void run() {
