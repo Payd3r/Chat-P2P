@@ -29,6 +29,7 @@ public class IO {
         this.ricezione = new DatagramSocket(12345);
         this.invio = new DatagramSocket(666);
         indirizzoD = null;
+        destinatario = "";
     }
 
     static IO getIstance() throws SocketException {
@@ -58,10 +59,11 @@ public class IO {
     public boolean inviaInizio(String s, InetAddress ip) throws IOException {
         //controllo se so con chi sto comunicando
         if (indirizzoD == null) {
+            indirizzoD = ip;
             byte[] responseBuffer = s.getBytes();
             DatagramPacket responsePacket = new DatagramPacket(responseBuffer, responseBuffer.length);
-            responsePacket.setAddress(ip);
-            responsePacket.setPort(666);
+            responsePacket.setAddress(indirizzoD);
+            responsePacket.setPort(invio.getPort());
             invio.send(responsePacket);
             return true;
         }
@@ -74,7 +76,7 @@ public class IO {
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
         ricezione.receive(packet);
         byte[] dataReceived = packet.getData(); // copia del buffer dichiarato sopra
-        if (indirizzoD != null) {
+        if (indirizzoD != null && indirizzoD == packet.getAddress()) {
             //se non sto ancora comunicando 
             //salvo l'indirizzo
             indirizzoD = packet.getAddress();

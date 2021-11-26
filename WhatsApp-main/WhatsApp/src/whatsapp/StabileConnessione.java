@@ -26,7 +26,7 @@ public class StabileConnessione extends javax.swing.JFrame {
     ThreadRiceviConnessione TRC;
     IO InviaRicevi;
 
-    private void IniziaComunicazione() {
+    public void IniziaComunicazione() {
         //apro form per comunicazione
         Comunicazione c = new Comunicazione();
         this.setVisible(false);
@@ -36,10 +36,8 @@ public class StabileConnessione extends javax.swing.JFrame {
     public StabileConnessione() throws SocketException, InterruptedException {
         initComponents();
         InviaRicevi = IO.getIstance();
-        TRC = new ThreadRiceviConnessione();
+        TRC = new ThreadRiceviConnessione(this);
         TRC.start();
-        TRC.join();
-        IniziaComunicazione();
     }
 
     /**
@@ -111,9 +109,12 @@ public class StabileConnessione extends javax.swing.JFrame {
                 String messaggio = InviaRicevi.ricevi();
                 String[] caso = messaggio.split(";");
                 if (caso[0] == "y") {
-                    InviaRicevi.destinatario = caso[1];
-                    InviaRicevi.invia("y; ;");
-                    IniziaComunicazione();
+                    if (InviaRicevi.invia("y; ;")) {
+                        //conferma inzio comunicazione
+                        InviaRicevi.destinatario = caso[1];
+                        TRC.stop();
+                        IniziaComunicazione();
+                    }
                 } else if (caso[0] == "n") {
                     InviaRicevi.destinatario = "";
                     InviaRicevi.indirizzoD = null;
@@ -126,7 +127,6 @@ public class StabileConnessione extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(StabileConnessione.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
@@ -169,6 +169,7 @@ public class StabileConnessione extends javax.swing.JFrame {
                 }
             }
         });
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

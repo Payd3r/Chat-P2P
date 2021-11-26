@@ -18,9 +18,11 @@ import javax.swing.JOptionPane;
 public class ThreadRiceviConnessione extends Thread {
 
     IO InviaRicevi;
+    StabileConnessione form;
 
-    public ThreadRiceviConnessione() throws SocketException {
+    public ThreadRiceviConnessione(StabileConnessione temp) throws SocketException {
         InviaRicevi = IO.getIstance();
+        form = temp;
     }
 
     private void chiedoUtente() throws SocketException, IOException {
@@ -55,5 +57,6 @@ public class ThreadRiceviConnessione extends Thread {
                 Logger.getLogger(ThreadRiceviConnessione.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        form.IniziaComunicazione();
     }
 }
