@@ -30,18 +30,24 @@ public class ThreadInvia extends Thread {
     public void run() {
         Messaggio temp = new Messaggio();
         while (true) {
-            try {
-                temp = buffer.getMessaggio();
-                byte[] responseBuffer = temp.toString().getBytes();
-                DatagramPacket responsePacket = new DatagramPacket(responseBuffer, responseBuffer.length);
-                responsePacket.setAddress(temp.getAddress());
-                responsePacket.setPort(666);
-                client.send(responsePacket);
-            } catch (UnknownHostException ex) {
-                Logger.getLogger(ThreadInvia.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(ThreadInvia.class.getName()).log(Level.SEVERE, null, ex);
+            if (buffer.controllo()) {
+                System.out.println("ciao");
+                try {
+                    temp = buffer.getMessaggio();
+                    byte[] responseBuffer = temp.toString().getBytes();
+                    DatagramPacket responsePacket = new DatagramPacket(responseBuffer, responseBuffer.length);
+                    responsePacket.setAddress(temp.getAddress());
+                    responsePacket.setPort(12345);
+                    client.send(responsePacket);
+                } catch (UnknownHostException ex) {
+                    Logger.getLogger(ThreadInvia.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(ThreadInvia.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                System.out.print("");
             }
+
         }
     }
 }

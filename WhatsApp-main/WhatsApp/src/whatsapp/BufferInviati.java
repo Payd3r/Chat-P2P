@@ -30,11 +30,26 @@ public class BufferInviati {
         return istance;
     }
 
+    public synchronized void aggiungi(String a) {
+        messaggi.add(new Messaggio(a.split(";")[0], a.split(";")[1]));
+    }
+
     public synchronized void aggiungi(String a, String b) {
         messaggi.add(new Messaggio(a.split(";")[0], a.split(";")[1], b));
     }
 
     public synchronized Messaggio getMessaggio() {
-        return messaggi.remove(messaggi.size());
+        if (messaggi.size() > 0) {
+            return messaggi.remove(messaggi.size() - 1);
+        } else {
+            return new Messaggio();
+        }
+    }
+
+    public boolean controllo() {
+        if (messaggi.size() > 0) {
+            return true;
+        }
+        return false;
     }
 }
