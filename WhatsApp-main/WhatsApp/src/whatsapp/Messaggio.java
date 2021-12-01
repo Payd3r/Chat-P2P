@@ -4,31 +4,43 @@
  */
 package whatsapp;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 /**
  *
  * @author Payd3r
  */
 public class Messaggio {
 
-    int id;
+    String scelta;
     String contenuto;
-    boolean tipo; //true -> inviato || false -> ricevuto
-    boolean fatto; //true -> gia' inviato || false -> in attesa di essere inviato
+    String indirizzo;
 
-    public Messaggio(String contenuto, int id, boolean t) {
-        this.contenuto = contenuto;
-        this.id = id;
-        this.tipo = t;
-        if (tipo == true) {
-            fatto = false;
-        }
-        fatto = true;
+    public Messaggio(String a, String b, String c) {
+        this.scelta = a;
+        this.contenuto = b;
+        this.indirizzo = c;
+    }
+
+    public Messaggio(String a, String b) {
+        this.scelta = a;
+        this.contenuto = b;
+        this.indirizzo = "";
     }
 
     public Messaggio() {
-        id = -1;
-        contenuto = "";
-        tipo = false;
-        fatto = false;
+        this.scelta = "";
+        this.contenuto = "";
+        this.indirizzo = "";
+    }
+
+    public InetAddress getAddress() throws UnknownHostException {
+        return InetAddress.getByName(indirizzo);
+    }
+
+    @Override
+    public String toString() {
+        return scelta + ";" + contenuto + ";";
     }
 }
