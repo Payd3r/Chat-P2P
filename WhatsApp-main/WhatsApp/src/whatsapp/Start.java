@@ -4,10 +4,13 @@
  */
 package whatsapp;
 
+import java.awt.Graphics;
 import java.net.SocketException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 
 /**
  *
@@ -24,7 +27,7 @@ public class Start extends javax.swing.JFrame {
 
     public Start() throws SocketException {
         initComponents();
-        thInvia = new ThreadInvia();
+        thInvia = new ThreadInvia(this);
         thRiceve = new ThreadRiceve();
         thElabora = new ThreadElabora();
         thInvia.start();
@@ -50,8 +53,10 @@ public class Start extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         Messaggio = new javax.swing.JTextField();
         btnInviaMess = new javax.swing.JButton();
-        pane = new javax.swing.JScrollPane();
         disconnect = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        pane = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -86,6 +91,21 @@ public class Start extends javax.swing.JFrame {
             }
         });
 
+        javax.swing.GroupLayout paneLayout = new javax.swing.GroupLayout(pane);
+        pane.setLayout(paneLayout);
+        paneLayout.setHorizontalGroup(
+            paneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        paneLayout.setVerticalGroup(
+            paneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 231, Short.MAX_VALUE)
+        );
+
+        jScrollPane1.setViewportView(pane);
+
+        jScrollPane2.setViewportView(jScrollPane1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -95,7 +115,7 @@ public class Start extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(41, 41, 41)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                 .addGroup(layout.createSequentialGroup()
                                     .addComponent(jLabel5)
                                     .addGap(18, 18, 18)
@@ -104,9 +124,10 @@ public class Start extends javax.swing.JFrame {
                                     .addComponent(btnInviaMess))
                                 .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                     .addComponent(jLabel3)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 230, Short.MAX_VALUE)
-                                    .addComponent(jLabel4))
-                                .addComponent(pane, javax.swing.GroupLayout.Alignment.LEADING))
+                                    .addGap(230, 230, 230)
+                                    .addComponent(jLabel4)
+                                    .addGap(0, 0, Short.MAX_VALUE))
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -136,9 +157,9 @@ public class Start extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(pane, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(Messaggio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnInviaMess)
@@ -158,27 +179,19 @@ public class Start extends javax.swing.JFrame {
         if (thElabora.connessione) {
             BufferInviati.getIstance().aggiungi("m;" + Messaggio.getText() + ";");
             //invio il messaggio
+            Cronologia.getIstance().aggiungiMSG(new Messaggio(Messaggio.getText(), true));
         } else {
             JOptionPane.showMessageDialog(null, "Connessione non presente!");
         }
     }//GEN-LAST:event_btnInviaMessActionPerformed
 
     private void disconnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_disconnectActionPerformed
-        try {
-            //disconnetti
-            thInvia.stop();
-            thRiceve.stop();
-            thElabora.stop();
-            thInvia = new ThreadInvia();
-            thRiceve = new ThreadRiceve();
-            thElabora = new ThreadElabora();
-            thInvia.start();
-            thRiceve.start();
-            thElabora.start();
-        } catch (SocketException ex) {
-            Logger.getLogger(Start.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+        BufferInviati.getIstance().aggiungi("c; ");
+        Cronologia.getIstance().reset();
+        BufferRicevuti.getIstance().aggiungi("c; ", thElabora.indirizzoDest);
+        Messaggio.setText("");
+        ip.setText("");
+        this.repaint();
     }//GEN-LAST:event_disconnectActionPerformed
 
     /**
@@ -220,6 +233,50 @@ public class Start extends javax.swing.JFrame {
             }
         });
     }
+    int y = 20;
+    int h = 20;
+
+    @Override
+    public void paint(Graphics g) {
+        super.paint(g);
+        pane.removeAll();
+        y = 20;
+        h = 20;
+        if (Cronologia.getIstance().messaggi.size() > 0) {
+            Messaggio temp;
+            for (int i = 0; i < Cronologia.getIstance().messaggi.size(); i++) {
+                temp = Cronologia.getIstance().messaggi.get(i);
+                if (temp.inviato) {
+                    stampaDestra(temp.contenuto);
+                } else {
+                    stampaSinistra(temp.contenuto);
+                }
+            }
+        }
+    }
+
+    public void stampaDestra(String msg) {
+        JLabel label = new JLabel();
+        label.setBounds(200, y, 150 + msg.length(), 20);
+        label.setText(msg);
+        this.add(label);
+        pane.add(label);
+        pane.setSize(pane.getWidth(), h);
+        h += 20;
+        y += 20;
+    }
+
+    public void stampaSinistra(String msg) {
+        JLabel label = new JLabel();
+        label.setBounds(0, y, 150 + msg.length(), 20);
+        label.setText(msg);
+        this.add(label);
+        pane.add(label);
+        pane.setSize(pane.getWidth(), h);
+        h += 20;
+        y += 20;
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField Messaggio;
@@ -232,6 +289,8 @@ public class Start extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JScrollPane pane;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JPanel pane;
     // End of variables declaration//GEN-END:variables
 }

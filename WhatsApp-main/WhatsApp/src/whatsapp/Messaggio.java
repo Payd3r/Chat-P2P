@@ -13,6 +13,7 @@ import java.net.UnknownHostException;
  */
 public class Messaggio {
 
+    boolean inviato;
     String scelta;
     String contenuto;
     String indirizzo;
@@ -34,6 +35,13 @@ public class Messaggio {
         } else {
             this.contenuto = b;
         }
+        this.indirizzo = "";
+    }
+
+    public Messaggio(String a, boolean b) {
+        this.scelta = "m";
+        this.contenuto = a;
+        this.inviato = b;
         this.indirizzo = "";
     }
 

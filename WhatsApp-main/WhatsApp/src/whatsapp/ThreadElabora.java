@@ -6,6 +6,7 @@ package whatsapp;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
@@ -67,10 +68,13 @@ public class ThreadElabora extends Thread {
                     }
                     break;
                 case "n":
-
+                    indirizzoDest = null;
+                    nomeDestinatario = null;
+                    connessione = false;
                     break;
                 case "m":
                     //disegna messaggio inviato
+                    Cronologia.getIstance().aggiungiMSG(new Messaggio(temp.contenuto, false));
                     break;
                 case "c":
                     //cancella tutti messaggi

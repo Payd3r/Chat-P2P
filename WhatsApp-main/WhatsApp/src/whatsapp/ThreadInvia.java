@@ -11,6 +11,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
 
 /**
  *
@@ -20,10 +21,12 @@ public class ThreadInvia extends Thread {
 
     DatagramSocket client;
     BufferInviati buffer;
+    JFrame frame;
 
-    public ThreadInvia() throws SocketException {
+    public ThreadInvia(JFrame a) throws SocketException {
         client = new DatagramSocket(666);
         buffer = BufferInviati.getIstance();
+        frame = a;
     }
 
     @Override
@@ -48,6 +51,7 @@ public class ThreadInvia extends Thread {
             } else {
                 System.out.print("");
             }
+            frame.repaint();
         }
     }
 }
