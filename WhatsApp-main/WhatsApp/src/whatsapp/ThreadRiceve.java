@@ -34,9 +34,12 @@ public class ThreadRiceve extends Thread {
                 server.receive(packet);
                 byte[] dataReceived = packet.getData();
                 buffer.aggiungi(new String(dataReceived, 0, packet.getLength()), packet.getAddress().toString());
+                //stampo contenuto
+                System.out.println("Ricevuto:" + new String(dataReceived, 0, packet.getLength()));
             } catch (IOException ex) {
                 Logger.getLogger(ThreadRiceve.class.getName()).log(Level.SEVERE, null, ex);
             }
+            System.out.print("");
         }
     }
 }

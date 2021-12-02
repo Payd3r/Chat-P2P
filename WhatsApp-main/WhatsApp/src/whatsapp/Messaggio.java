@@ -19,13 +19,21 @@ public class Messaggio {
 
     public Messaggio(String a, String b, String c) {
         this.scelta = a;
-        this.contenuto = b;
+        if (b == "") {
+            this.contenuto = " ";
+        } else {
+            this.contenuto = b;
+        }
         this.indirizzo = c;
     }
 
     public Messaggio(String a, String b) {
         this.scelta = a;
-        this.contenuto = b;
+        if (b == "") {
+            this.contenuto = " ";
+        } else {
+            this.contenuto = b;
+        }
         this.indirizzo = "";
     }
 
@@ -41,6 +49,10 @@ public class Messaggio {
 
     @Override
     public String toString() {
-        return scelta + ";" + contenuto + ";";
+        if (contenuto.equals(" ")) {
+            return scelta + ";";
+        } else {
+            return scelta + ";" + contenuto + ";";
+        }
     }
 }

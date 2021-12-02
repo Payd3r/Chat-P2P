@@ -31,14 +31,15 @@ public class ThreadInvia extends Thread {
         Messaggio temp = new Messaggio();
         while (true) {
             if (buffer.controllo()) {
-                System.out.println("ciao");
                 try {
                     temp = buffer.getMessaggio();
                     byte[] responseBuffer = temp.toString().getBytes();
                     DatagramPacket responsePacket = new DatagramPacket(responseBuffer, responseBuffer.length);
                     responsePacket.setAddress(temp.getAddress());
-                    responsePacket.setPort(12345);
+                    responsePacket.setPort(12346);
                     client.send(responsePacket);
+                    //stampo contenuto
+                    System.out.println("Invio:" + temp.toString());
                 } catch (UnknownHostException ex) {
                     Logger.getLogger(ThreadInvia.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IOException ex) {
@@ -47,7 +48,6 @@ public class ThreadInvia extends Thread {
             } else {
                 System.out.print("");
             }
-
         }
     }
 }

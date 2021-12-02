@@ -34,8 +34,12 @@ public class BufferInviati {
         messaggi.add(new Messaggio(a.split(";")[0], a.split(";")[1]));
     }
 
-    public synchronized void aggiungi(String a, String b) {
-        messaggi.add(new Messaggio(a.split(";")[0], a.split(";")[1], b));
+    public void aggiungi(String a, String b) {
+        try {
+            messaggi.add(new Messaggio(a.split(";")[0], a.split(";")[1], controlloInd(b)));
+        } catch (Exception ex) {
+            messaggi.add(new Messaggio(a.split(";")[0], "", controlloInd(b)));
+        }
     }
 
     public synchronized Messaggio getMessaggio() {
@@ -51,5 +55,13 @@ public class BufferInviati {
             return true;
         }
         return false;
+    }
+
+    public String controlloInd(String s) {
+        if (s.substring(0, 1).equals("/")) {
+            return s.substring(1, s.length());
+        } else {
+            return s;
+        }
     }
 }

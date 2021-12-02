@@ -22,7 +22,8 @@ public class ThreadElabora extends Thread {
 
     public ThreadElabora() {
         this.connessione = false;
-        this.indirizzoDest = "";
+        this.indirizzoDest = null;
+        this.nomeDestinatario = null;
         bufferInv = BufferInviati.getIstance();
         buffferRic = BufferRicevuti.getIstance();
     }
@@ -40,40 +41,45 @@ public class ThreadElabora extends Thread {
     public void run() {
         Messaggio temp = new Messaggio();
         while (true) {
-            try {
-                temp = buffferRic.getMessaggio();
-                switch (temp.scelta) {
-                    case "a":
+            temp = buffferRic.getMessaggio();
+            switch (temp.scelta) {
+                case "a":
+                    //se non c'e' niente posso accettare una nuova connessione
+                    if (indirizzoDest == null && nomeDestinatario == null) {
                         indirizzoDest = temp.indirizzo;
                         nomeDestinatario = temp.contenuto;
                         if (richiediUtente(nomeDestinatario)) {
                             bufferInv.aggiungi("y;Andrea", temp.indirizzo);
                         } else {
-                            bufferInv.aggiungi("n; ;", temp.indirizzo);
+                            bufferInv.aggiungi("c;", temp.indirizzo);
                         }
-                        break;
-                    case "y":
-                        if (temp.indirizzo == indirizzoDest) {
-                            //iniziare la connessione
-                            JOptionPane.showMessageDialog(null, "Connessione iniziata!");
+                    }
+                    break;
+                case "y":
+                    if (temp.indirizzo.equals("127.0.0.1")) {
+                        if (temp.contenuto.equals(" ")) {
+                            //ho ricevuto una richiesta e mando la conferma
+                        } else {
+                            bufferInv.aggiungi("y;", temp.indirizzo);
                         }
-                        break;
-                    case "n":
+                        JOptionPane.showMessageDialog(null, "Connessione iniziata!");
+                        connessione = true;
+                    }
+                    break;
+                case "n":
 
-                        break;
-                    case "m":
-                        //disegna messaggio inviato
-                        break;
-                    case "c":
-                        //cancella tutti messaggi
-                        break;
-                    default:
-                        break;
-                }
-                Thread.sleep(50);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(ThreadElabora.class.getName()).log(Level.SEVERE, null, ex);
+                    break;
+                case "m":
+                    //disegna messaggio inviato
+                    break;
+                case "c":
+                    //cancella tutti messaggi
+                    indirizzoDest = null;
+                    nomeDestinatario = null;
+                    connessione = false;
+                    break;
             }
+            System.out.print("");
         }
     }
 }
